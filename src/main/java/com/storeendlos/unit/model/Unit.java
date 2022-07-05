@@ -1,6 +1,7 @@
 package com.storeendlos.unit.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.storeendlos.AuditingAndResponse.Audit;
 import com.storeendlos.Item.model.StoreItemModel;
 
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "unit")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Unit {
+public class Unit extends Audit<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long uid;

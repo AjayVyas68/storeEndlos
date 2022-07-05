@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.storeendlos.AuditingAndResponse.Audit;
 import com.storeendlos.Item.model.StoreItemModel;
 import com.storeendlos.Response.Model.ResEntity;
+import com.storeendlos.indent.Model.Indent;
 import com.storeendlos.user.model.User;
 
 
@@ -14,7 +15,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "issueItem")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class IssueItem extends Audit<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +35,43 @@ public class IssueItem extends Audit<String> {
     @JsonIgnoreProperties({"issueItem","itemRequest","employe","itemModelSet"})
     private StoreItemModel storeItemModel;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "tbl_multiple_item_inIssued", joinColumns = @JoinColumn(name = "issue_id"), inverseJoinColumns = @JoinColumn(name = "item_id"))
+    @JsonIgnoreProperties(value = {"issueItem"})
+    private Set<StoreItemModel> itemData;
+
+    public Set<StoreItemModel> getItemData() {
+        return itemData;
+    }
+
+    public void setItemData(Set<StoreItemModel> itemData) {
+        this.itemData = itemData;
+    }
+
+    public Set<StoreItemModel> getItemModelSet() {
+        return itemModelSet;
+    }
+
+    public void setItemModelSet(Set<StoreItemModel> itemModelSet) {
+        this.itemModelSet = itemModelSet;
+    }
+
+    public Set<Indent> getIndents() {
+        return indents;
+    }
+
+    public void setIndents(Set<Indent> indents) {
+        this.indents = indents;
+    }
+
+    public Set<ResEntity> getResponse() {
+        return response;
+    }
+
+    public void setResponse(Set<ResEntity> response) {
+        this.response = response;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "emp_id"), name = "emp_id", referencedColumnName = "user_profile_id")
     @JsonIgnoreProperties({"issueItemsData","itemModelSet"
@@ -41,11 +79,13 @@ public class IssueItem extends Audit<String> {
                ,"familyDetails" })
     private User emp;
 
-    @OneToMany(mappedBy = "employe",cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("employe")
+    @OneToMany(mappedBy = "issueItem",cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("issueItem")
     private Set<StoreItemModel> itemModelSet;
 
-
+    @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties(value = {"issue", "itemModelSet", "employee"}, allowSetters = true)
+    private Set<Indent> indents;
     @OneToMany(mappedBy = "employe",cascade = CascadeType.ALL)
     @JsonIgnoreProperties("employe")
     private Set<ResEntity> response;

@@ -1,9 +1,13 @@
 package com.storeendlos.vendor.Service;
 
+import com.storeendlos.Item.Repository.ItemRepository;
+import com.storeendlos.Item.model.StoreItemModel;
 import com.storeendlos.Payload.response.Pagination;
 import com.storeendlos.exception.ExceptionService.UserNotFound;
 import com.storeendlos.vendor.Repository.VendorRepository;
 import com.storeendlos.vendor.model.VendorModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
@@ -12,18 +16,39 @@ import java.lang.reflect.Field;
 import java.sql.Date;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VendorService {
-
+    public static final Logger log= LoggerFactory.getLogger(VendorService.class);
     private final VendorRepository vendorRepository;
+    private final ItemRepository itemRepository;
 
-    public VendorService(VendorRepository vendorRepository) {
+    public VendorService(VendorRepository vendorRepository, ItemRepository itemRepository) {
         this.vendorRepository = vendorRepository;
 
+        this.itemRepository = itemRepository;
     }
 
+//
     public VendorModel SaveData(VendorModel vendorModel) {
+
+//        vendorModel.getItemData().addAll(
+//                vendorModel.getItemData()
+//                        .stream()
+//                        .map(storeItemModel -> {
+//                            StoreItemModel storeItem=itemRepository.findById(storeItemModel.getItemId()).get();
+//                            log.info("vendor data {}",vendorModel);
+//                            log.info("item Data {}",storeItem);
+//                            storeItem.getVendorDate().add(vendorModel);
+//                            return storeItem;
+//                        }).collect(Collectors.toSet())
+//        );
+//        for (StoreItemModel storeItemModel: vendorModel.getItemData()) {
+//            vendorModel.addItem();
+////            vendorModel.addItem(storeItemModel);
+////                log.info("store data  {}",storeItemModel);
+//            }
         return vendorRepository.save(vendorModel);
     }
 

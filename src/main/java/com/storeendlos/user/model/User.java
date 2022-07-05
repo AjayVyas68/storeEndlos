@@ -1,6 +1,8 @@
 package com.storeendlos.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.storeendlos.AuditingAndResponse.Audit;
+import com.storeendlos.indent.Model.Indent;
 import com.storeendlos.issue.model.IssueItem;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,7 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "userRegistration")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class User {
+public class User extends Audit<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_profile_id")
@@ -59,6 +61,17 @@ public class User {
     @OneToMany(mappedBy = "emp",cascade = CascadeType.ALL)
     @JsonIgnoreProperties("emp")
     private Set<IssueItem> issueItemsData;
+    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("employee")
+    private Set<Indent> indentData;
+
+    public Set<Indent> getIndentData() {
+        return indentData;
+    }
+
+    public void setIndentData(Set<Indent> indentData) {
+        this.indentData = indentData;
+    }
 
     public Set<IssueItem> getIssueItemsData() {
         return issueItemsData;

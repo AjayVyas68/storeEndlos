@@ -2,6 +2,7 @@ package com.storeendlos.Item.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.storeendlos.AuditingAndResponse.Audit;
+import com.storeendlos.indent.Model.Indent;
 import com.storeendlos.issue.model.IssueItem;
 import com.storeendlos.productCategory.model.ProductCategory;
 import com.storeendlos.unit.model.Unit;
@@ -14,24 +15,27 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "item")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class StoreItemModel  extends Audit<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemId;
+
     private String itemName;
     private String itemDescription;
     private String sourceName;
     private LocalDate expiryDate;
     private int quantity;
+    private Double tax;
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date createdAt;
@@ -44,9 +48,7 @@ public class StoreItemModel  extends Audit<String> {
     @JsonIgnoreProperties({"itemunit"})
     private Unit unit;
 
-    @ManyToMany(mappedBy = "itemData")
-    @JsonIgnoreProperties({"itemData"})
-    private Set<VendorModel> vendorDate=new HashSet<>();
+
 
     @OneToMany(mappedBy = "storeItemModel",cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"storeItemModel","emp","issueItemsData"})
@@ -56,6 +58,20 @@ public class StoreItemModel  extends Audit<String> {
     @JsonIgnoreProperties({"itemModelSet","issueItemsData","itemRequest","response","hrModel","familyDetails","userExperienceData"
             ,"passwordEntity","userQualificationData","roles","indentData"})
     private User employe;
+    @OneToMany(mappedBy = "storeItem",cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"storeItem","employee"})
+    private Set<Indent> itemRequest;
+    @ManyToMany(mappedBy = "itemData")
+    @JsonIgnoreProperties({"itemData"})
+    private Set<VendorModel> vendorDate=new HashSet<>();
+
+    public Set<Indent> getItemRequest() {
+        return itemRequest;
+    }
+
+    public void setItemRequest(Set<Indent> itemRequest) {
+        this.itemRequest = itemRequest;
+    }
 
     @PrePersist
     private void CreatedAt() {
@@ -134,6 +150,14 @@ public class StoreItemModel  extends Audit<String> {
         this.unit = unit;
     }
 
+    public Double getTax() {
+        return tax;
+    }
+
+    public void setTax(Double tax) {
+        this.tax = tax;
+    }
+
     public Set<VendorModel> getVendorDate() {
         return vendorDate;
     }
@@ -156,5 +180,38 @@ public class StoreItemModel  extends Audit<String> {
 
     public void setEmploye(User employe) {
         this.employe = employe;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StoreItemModel that = (StoreItemModel) o;
+        return quantity == that.quantity && Objects.equals(itemId, that.itemId) && Objects.equals(itemName, that.itemName) && Objects.equals(itemDescription, that.itemDescription) && Objects.equals(sourceName, that.sourceName) && Objects.equals(expiryDate, that.expiryDate) && Objects.equals(tax, that.tax) && Objects.equals(createdAt, that.createdAt) && Objects.equals(productCategory, that.productCategory) && Objects.equals(unit, that.unit) && Objects.equals(vendorDate, that.vendorDate) && Objects.equals(issueItem, that.issueItem) && Objects.equals(employe, that.employe) && Objects.equals(itemRequest, that.itemRequest);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(itemId, itemName, itemDescription, sourceName, expiryDate, quantity, tax, createdAt, productCategory, unit, vendorDate, issueItem, employe, itemRequest);
+    }
+
+    @Override
+    public String toString() {
+        return "StoreItemModel{" +
+                "itemId=" + itemId +
+                ", itemName='" + itemName + '\'' +
+                ", itemDescription='" + itemDescription + '\'' +
+                ", sourceName='" + sourceName + '\'' +
+                ", expiryDate=" + expiryDate +
+                ", quantity=" + quantity +
+                ", tax=" + tax +
+                ", createdAt=" + createdAt +
+//                ", productCategory=" + productCategory +
+//                ", unit=" + unit +
+//                ", issueItem=" + issueItem +
+//                ", employe=" + employe +
+//                ", itemRequest=" + itemRequest +
+//                ", vendorDate=" + vendorDate +
+                '}';
     }
 }

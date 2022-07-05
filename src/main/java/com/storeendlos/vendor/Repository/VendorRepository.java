@@ -8,10 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
+import java.util.List;
 
 public interface VendorRepository extends JpaRepository<VendorModel,Long> {
     @Query("select b from VendorModel b where DATE(b.createdAt) between :start and :end")
     Page<VendorModel> findByCreatedAtBetween(Date start, Date end , Pageable pageable);
     @Query("select b from VendorModel b where DATE(b.createdAt) =:createdAt")
     Page<VendorModel> findByCreatedAt(@Param("createdAt")Date d1, Pageable pageable);
+
+
 }

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -42,5 +43,21 @@ public class ItemController {
     @PatchMapping(value = "/{itemId}")
     public ResponseEntity<?> updateItemData(@PathVariable long itemId, @RequestBody Map<Object, Object> changes) {
         return new ResponseEntity<>(itemService.updateItem(itemId, changes), HttpStatus.OK);
+    }
+    @GetMapping(value = "/{itemId}/getData/{vendorId}")
+    public ResponseEntity<?> findByItemAndVendor(@PathVariable Long itemId,@PathVariable Long vendorId)
+    {
+        List<?> data=itemService.findByItemIdAndVendorID(itemId, vendorId);
+        log.info("data between item id And vendorId {}",data );
+        return new ResponseEntity<>(PageResponse.SuccessResponse(data),HttpStatus.OK);
+    }
+    @GetMapping(value = "/getDataTwoDate")
+    public ResponseEntity<?> findByDateTwoDateBetween(
+            @RequestParam (required = false) Date start,@RequestParam (required = false) Date end
+            )
+    {
+        List<?> data=itemService.findByItemDateBetween(start, end);
+        log.info("data Between Two Date {}",data);
+        return new ResponseEntity<>(PageResponse.SuccessResponse(data),HttpStatus.OK);
     }
 }
