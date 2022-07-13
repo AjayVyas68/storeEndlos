@@ -15,5 +15,5 @@ public interface ItemRepository extends JpaRepository<StoreItemModel,Long> {
     @Query("select i from StoreItemModel  i where  DATE(i.createdAt) between :start and :end")
     List<?> findByCreatedBetweenGenerateItem(@Param("start") Date start, @Param("end")  Date end);
     @Query("select i from StoreItemModel i where  i.createdAt=:date")
-    List<?> findbySingleDate(Date date);
+    List<?> findBySingleDate(@Param("date")Date date);
 }

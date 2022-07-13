@@ -5,6 +5,7 @@ import com.storeendlos.Item.model.StoreItemModel;
 import com.storeendlos.Payload.response.PageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,11 +54,22 @@ public class ItemController {
     }
     @GetMapping(value = "/getDataTwoDate")
     public ResponseEntity<?> findByDateTwoDateBetween(
-            @RequestParam (required = false) Date start,@RequestParam (required = false) Date end
+            @RequestParam (required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date start, @RequestParam (required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date end
             )
     {
         List<?> data=itemService.findByItemDateBetween(start, end);
+        log.info("number of Data {}",data.size());
         log.info("data Between Two Date {}",data);
+        return new ResponseEntity<>(PageResponse.SuccessResponse(data),HttpStatus.OK);
+    }
+    @GetMapping(value = "/getSingleDate")
+    public ResponseEntity<?> findBySingleDate(
+            @RequestParam (required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date
+    )
+    {
+        List<?> data=itemService.findByItemSingleDate(date);
+        log.info("number of Data {}",data.size());
+        log.info("data Single Date {}",data);
         return new ResponseEntity<>(PageResponse.SuccessResponse(data),HttpStatus.OK);
     }
 }

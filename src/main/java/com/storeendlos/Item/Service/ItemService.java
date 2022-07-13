@@ -88,6 +88,6 @@ public class ItemService {
     }
 
     public List<?> findByItemSingleDate(Date date) {
-        return itemRepository.findbySingleDate(date);
+        return itemRepository.findBySingleDate(date);
     }
 }
